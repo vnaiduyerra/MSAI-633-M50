@@ -1,5 +1,11 @@
 __pycache__/
 *.pyc
 .venv/
+.env
+.env.*
+*.key
 flagged/
 .gradio/
+# raw crawl bytes and the vector index are rebuilt locally; normalized text in data/processed is committed
+data/raw/
+data/index/

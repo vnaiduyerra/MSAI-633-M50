@@ -1,0 +1,31 @@
+{
+  "_comment": "Crawl scope. Edit seeds/prefixes if the team picks a different site. robots.txt is always honored in code.",
+  "user_agent_name": "MSAI633-CricketRAG-Bot/1.0 (student research project)",
+  "project_url": "https://github.com/vnaiduyerra/MSAI-633-M50",
+  "seeds": [
+    "https://www.lords.org/mcc/the-laws-of-cricket",
+    "https://www.lords.org/mcc/the-laws-of-cricket/laws",
+    "https://www.lords.org/mcc/the-laws-of-cricket/spirit-of-cricket"
+  ],
+  "allowed_domains": ["www.lords.org", "lords.org"],
+  "allowed_path_prefixes": ["/mcc/"],
+  "allow_pdfs_anywhere_on_allowed_domains": true,
+  "exclude_patterns": [
+    "(?i)/(login|log-in|signin|sign-in|account|my-account|register|checkout|basket|cart)(/|$|\\?)",
+    "(?i)/(staff|people|directory|our-people|committee-members|members-area|membership/members)(/|$)",
+    "(?i)/(players?|squad)/[^/]+$",
+    "(?i)/(shop|tickets?|hospitality|search)(/|$|\\?)",
+    "(?i)\\.(jpg|jpeg|png|gif|svg|webp|mp4|mp3|zip|docx?|xlsx?|pptx?)(\\?|$)",
+    "(?i)[?&](utm_|fbclid|gclid)"
+  ],
+  "page_types": [
+    ["pdf", "(?i)\\.pdf(\\?|$)"],
+    ["law", "(?i)/the-laws-of-cricket/"],
+    ["spirit", "(?i)spirit-of-cricket"],
+    ["news", "(?i)/news/"]
+  ],
+  "default_page_type": "general",
+  "max_pages": 400,
+  "min_delay_seconds": 1.0,
+  "timeout_seconds": 30
+}

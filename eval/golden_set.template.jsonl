@@ -1,0 +1,5 @@
+// Copy to eval/golden_set.jsonl and replace these two EXAMPLE lines with your own items.
+// Write items from the crawled pages BEFORE looking at chatbot output; a human must check every gold answer.
+// Use `python -m rag.cli search "your words"` to find the exact page and a <=25-word evidence quote.
+{"id": "EXAMPLE-SH01", "category": "single_hop", "question": "<question a real user would ask>", "gold_answer": "<short answer in your words>", "gold_urls": ["<exact source_url from data/processed/docs.jsonl>"], "evidence": [{"url": "<same url>", "quote": "<copied verbatim from the page, 25 words or fewer>"}], "searched_for": "", "expected_behavior": "answer", "verified_by": "", "verified_on": "", "split": "", "notes": ""}
+{"id": "EXAMPLE-UN01", "category": "unanswerable", "question": "<question the site genuinely does not answer>", "gold_answer": "", "gold_urls": [], "evidence": [], "searched_for": "<terms and pages you checked, and that nothing answered it>", "expected_behavior": "refuse", "verified_by": "", "verified_on": "", "split": "", "notes": ""}
