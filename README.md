@@ -4,7 +4,7 @@ emoji: 🏏
 colorFrom: green
 colorTo: blue
 sdk: gradio
-sdk_version: 5.9.1
+sdk_version: 5.35.0
 app_file: app.py
 pinned: false
 ---
@@ -60,6 +60,8 @@ python -m rag.cli report                        # regenerate tables and fill rep
 python app.py                                   # chatbot at http://localhost:7861 (+ gradio.live link)
 ```
 Every table in `reports/` is generated from these outputs; nothing is typed in by hand.
+After a successful run, `pip freeze > requirements.lock.txt` records the exact package versions used
+(the Colab notebook does this); commit that file alongside the results.
 
 ## Repository layout
 ```

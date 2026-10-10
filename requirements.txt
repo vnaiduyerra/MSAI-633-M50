@@ -1,14 +1,13 @@
-# Pinned for reproducibility (Python 3.10-3.12). torch is not pinned: use the build that
-# matches your CUDA (Colab and Hugging Face Spaces already ship one).
+# Version ranges that install cleanly on Colab (Python 3.12/3.13, numpy 2) and on Hugging Face
+# Spaces. pip keeps already-installed versions that satisfy these. The exact versions used for the
+# reported numbers are frozen into requirements.lock.txt by the Colab notebook (commit that file).
 torch>=2.2
-transformers==4.47.1
-sentence-transformers==3.3.1
-huggingface-hub==0.27.1
-accelerate==1.2.1
-faiss-cpu==1.9.0.post1
-gradio==5.9.1
-numpy==1.26.4
-beautifulsoup4==4.12.3
-lxml==5.3.0
-pypdf==5.1.0
-requests==2.32.3
+transformers>=4.46
+sentence-transformers>=3.3
+faiss-cpu>=1.10
+gradio>=5.35
+numpy>=1.26
+beautifulsoup4>=4.12
+lxml>=5.3
+pypdf>=5.1
+requests>=2.32

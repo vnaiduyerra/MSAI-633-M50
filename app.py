@@ -19,6 +19,7 @@ from rag.app_format import format_answer, format_trace
 from rag.cli import components
 from rag.pipeline import CONFIGS
 
+GRADIO_MAJOR = int(gr.__version__.split(".")[0])
 PAGE_TYPES = ["all", "law", "spirit", "pdf", "news", "general"]
 RELIABILITY_NOTE = (
     "⚠️ **How far to trust this:** answers come only from the pages listed under *Sources*, "
@@ -39,8 +40,19 @@ def get_pipeline():
     return _pipeline
 
 
+def _text(content):
+    """Gradio 6 may hand message content back as a list of {"type": "text", "text": ...} parts."""
+    if isinstance(content, str):
+        return content
+    if isinstance(content, dict):
+        return content.get("text", "")
+    if isinstance(content, (list, tuple)):
+        return " ".join(_text(c) for c in content)
+    return str(content or "")
+
+
 def respond(question, history, page_type):
-    history = history or []
+    history = [{"role": m["role"], "content": _text(m["content"])} for m in (history or [])]
     question = (question or "").strip()
     if not question:
         return history, gr.update(), ""
@@ -51,11 +63,14 @@ def respond(question, history, page_type):
 
 
 def create_ui():
-    with gr.Blocks(title="Cricket Rules RAG Chatbot", theme=gr.themes.Soft()) as demo:
+    # Gradio 6 moved `theme` to launch() and made the messages format the only one
+    blocks_kwargs = {"theme": gr.themes.Soft()} if GRADIO_MAJOR < 6 else {}
+    chat_kwargs = {"type": "messages"} if GRADIO_MAJOR < 6 else {}
+    with gr.Blocks(title="Cricket Rules RAG Chatbot", **blocks_kwargs) as demo:
         gr.Markdown("# 🏏 Cricket Rules Chatbot\nAsk about the Laws of Cricket. Every answer cites the page it "
                     "came from; if the pages don't cover your question, the bot says so instead of guessing.")
         gr.Markdown(RELIABILITY_NOTE)
-        chatbot = gr.Chatbot(label="Conversation", height=460, type="messages")
+        chatbot = gr.Chatbot(label="Conversation", height=460, **chat_kwargs)
         with gr.Row():
             question = gr.Textbox(placeholder="e.g. When is a ball a no ball?", label="Your question",
                                   scale=5, lines=1)
@@ -77,7 +92,9 @@ def create_ui():
 
 if __name__ == "__main__":
     on_spaces = "SPACE_ID" in os.environ  # set automatically on Hugging Face Spaces
+    launch_kwargs = {"theme": gr.themes.Soft()} if GRADIO_MAJOR >= 6 else {}
     create_ui().queue().launch(
+        **launch_kwargs,
         server_name="0.0.0.0",
         # Spaces serves on 7860; leave the port to Gradio there
         server_port=None if on_spaces else int(os.environ.get("PORT", 7861)),

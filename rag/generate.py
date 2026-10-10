@@ -50,7 +50,13 @@ class Generator:
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         dtype = torch.float16 if self.device == "cuda" else torch.float32
         self.tok = AutoTokenizer.from_pretrained(name)
-        self.model = AutoModelForCausalLM.from_pretrained(name, torch_dtype=dtype).to(self.device).eval()
+        try:  # transformers >= 4.56 calls it `dtype`; older releases only know `torch_dtype`
+            model = AutoModelForCausalLM.from_pretrained(name, dtype=dtype)
+            if model.dtype != dtype:
+                raise TypeError
+        except TypeError:
+            model = AutoModelForCausalLM.from_pretrained(name, torch_dtype=dtype)
+        self.model = model.to(self.device).eval()
 
     def chat(self, messages, max_new_tokens=config.MAX_NEW_TOKENS):
         import torch
