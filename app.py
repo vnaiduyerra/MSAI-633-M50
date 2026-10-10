@@ -326,8 +326,10 @@ def create_ui():
 # ──────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     demo = create_ui()
+    on_spaces = "SPACE_ID" in os.environ  # set automatically on Hugging Face Spaces
     demo.launch(
         server_name="0.0.0.0",
-        server_port=int(os.environ.get("PORT", 7861)),
-        share=os.environ.get("GRADIO_SHARE", "1") == "1",
+        # Spaces serves on 7860; leave the port to Gradio there
+        server_port=None if on_spaces else int(os.environ.get("PORT", 7861)),
+        share=not on_spaces and os.environ.get("GRADIO_SHARE", "1") == "1",
     )
