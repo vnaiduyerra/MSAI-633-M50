@@ -34,6 +34,12 @@ The first run downloads the models from Hugging Face (~400 MB). Then open
 http://localhost:7861. A public `gradio.live` link is also printed; set
 `GRADIO_SHARE=0` to turn it off, or `PORT=xxxx` to change the port.
 
+## Run in Google Colab
+
+Open [`run_in_colab.ipynb`](https://colab.research.google.com/github/vnaiduyerra/MSAI-633-M50/blob/claude/amazing-fermat-bu68c9/run_in_colab.ipynb)
+in Colab and choose **Runtime → Run all**. The last cell prints a public
+`gradio.live` link to the chatbot. The free CPU runtime is enough.
+
 ## Deploy to a Hugging Face Space
 
 This README's YAML header is the Space config (Gradio SDK, `app.py`). Push the repo
@@ -53,4 +59,5 @@ minutes on the free CPU tier), then serves the chatbot.
 app.py                 # RAG pipeline + Gradio UI
 data/cricket_rules.md  # corpus
 requirements.txt
+run_in_colab.ipynb     # one-click Colab launcher
 ```
