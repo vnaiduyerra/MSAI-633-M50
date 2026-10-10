@@ -11,11 +11,11 @@ Pipeline stages (per MSAI 633 project spec):
   4. Vector store  - FAISS (IndexFlatIP for cosine similarity)
   5. Retrieval     - Dense (FAISS) + BM25 + hybrid fusion (RRF)
   6. Reranking     - cross-encoder/ms-marco-MiniLM-L-6-v2
-  7. Generation    - google/flan-t5-base (local, since HF Inference API is DNS-blocked)
+  7. Generation    - google/flan-t5-small (runs locally on CPU)
   8. Refusal       - explicit "I don't have that information" when context is insufficient
   9. Citations     - source section headings attached to every factual answer
 
-Run:  .venv/bin/python app.py
+Run:  pip install -r requirements.txt && python app.py
 """
 
 import multiprocessing
@@ -187,10 +187,9 @@ def rerank(query, chunks, retrieved_indices, top_k=5):
     return ranked[:top_k]
 
 # ──────────────────────────────────────────────────────────────────────
-# 7. GENERATION (flan-t5-base)
+# 7. GENERATION (flan-t5-small)
 # ──────────────────────────────────────────────────────────────────────
 print("Loading generation model (flan-t5-small)...")
-from transformers import T5ForConditionalGeneration, T5Tokenizer
 t5_tokenizer = T5Tokenizer.from_pretrained("google/flan-t5-small")
 t5_model = T5ForConditionalGeneration.from_pretrained("google/flan-t5-small")
 
@@ -236,6 +235,9 @@ def cricket_rag_chat(question, history):
     Main chatbot function. Returns (updated_history, retrieval_trace).
     """
     history = history or []
+    question = (question or "").strip()
+    if not question:
+        return history, "", ""
 
     # Retrieve
     retrieved = hybrid_retrieve(faiss_index, embeddings, bm25_index, question, k=20)
@@ -293,7 +295,7 @@ def create_ui():
 
         with gr.Row():
             with gr.Column(scale=2):
-                chatbot = gr.Chatbot(label="Conversation", height=400)
+                chatbot = gr.Chatbot(label="Conversation", height=400, type="messages")
                 question_input = gr.Textbox(
                     placeholder="Ask a cricket rules question...",
                     label="Your Question",
@@ -324,4 +326,8 @@ def create_ui():
 # ──────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     demo = create_ui()
-    demo.launch(server_name="0.0.0.0", server_port=7861, share=True)
+    demo.launch(
+        server_name="0.0.0.0",
+        server_port=int(os.environ.get("PORT", 7861)),
+        share=os.environ.get("GRADIO_SHARE", "1") == "1",
+    )
